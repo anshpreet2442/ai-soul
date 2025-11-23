@@ -29,18 +29,65 @@ export interface WrappedSlide {
     textColor: string;
 }
 
+export interface TarotCard {
+    cardName: string;
+    meaning: string;
+    imagePrompt: string; // For generating the card image
+    imageBase64?: string;
+}
+
+export interface SongRecommendation {
+    title: string;
+    artist: string;
+    reason: string;
+    coverArtPrompt: string; // For generating album art
+    coverArtBase64?: string;
+}
+
+export interface CelebrityMatch {
+    name: string;
+    reason: string;
+    imagePrompt: string;
+    imageBase64?: string;
+}
+
+export interface RelationshipAdvice {
+    status: 'Single' | 'Relationship' | 'Complicated';
+    // For Singles
+    datingStrategy?: string;
+    meetingPlace?: string;
+    // For Relationships
+    redFlags?: string[];
+    greenFlags?: string[];
+    dominantFlagScore?: number; // 0 (All Red) to 100 (All Green)
+}
+
 export interface AnalysisResult {
     twoLetterCode: string; // e.g., "SA", "AP"
     attachmentStyleName: string;
     scores: Record<string, number>; // dimension -> score 0-100
     summary: string;
     slides: WrappedSlide[];
-    imagePrompt: string;
+    tarot: TarotCard;
+    song: SongRecommendation;
+    celebrityMatch: CelebrityMatch;
+    advice: RelationshipAdvice;
+    mainImagePrompt: string;
     generatedImageBase64?: string;
+}
+
+export interface UserContext {
+    name: string;
+    age: number;
+    gender: string;
+    relationshipStatus: 'Single' | 'Relationship' | 'Complicated' | 'Married';
+    relationshipHistoryCount: number;
+    intent: string; // "Find myself", "Fix my relationship", "Just curious"
 }
 
 export enum AppState {
     WELCOME,
+    USER_CONTEXT,
     GENERATING_QUIZ,
     QUIZ,
     ANALYZING,
