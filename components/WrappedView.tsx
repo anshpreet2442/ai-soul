@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AnalysisResult } from '../types';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
-import { RefreshCw, Zap, Download, Music, Gem, Star, Heart, MapPin, Flag } from 'lucide-react';
+import { RefreshCw, Zap, Download, Music, Gem, Star, Heart, MapPin, Flag, UserPlus, ArrowUpCircle, Sparkles } from 'lucide-react';
 import { generateHtmlReport } from '../services/reportGenerator';
 
 interface WrappedViewProps {
@@ -15,7 +15,7 @@ export const WrappedView: React.FC<WrappedViewProps> = ({ result, onRestart }) =
 
     const slides = [
         { type: 'intro', title: "Your Soul's Data is Ready" },
-        ...result.slides.map(s => ({ type: 'ai-content', ...s })),
+        ...(result.slides || []).map(s => ({ type: 'ai-content', ...s })),
         { type: 'chart', title: "The Shape of Your Heart" },
         { type: 'tarot', title: "Your Soul Card" },
         { type: 'advice', title: result.advice.status === 'Single' ? "The Hunt" : "The Health Check" },
@@ -104,7 +104,7 @@ const renderSlideContent = (slide: any, result: AnalysisResult, chartData: any[]
             return (
                 <div className="flex-1 flex flex-col justify-center p-8" style={{ backgroundColor: slide.bgColor || '#18181b' }}>
                     <h2 className="text-4xl font-display font-bold mb-6" style={{ color: slide.textColor || '#fff' }}>{slide.title}</h2>
-                    <p className="text-2xl leading-relaxed font-medium" style={{ color: slide.textColor || '#fff' }}>
+                    <p className="text-xl leading-relaxed font-medium" style={{ color: slide.textColor || '#fff' }}>
                         {slide.content}
                     </p>
                 </div>
@@ -151,23 +151,55 @@ const renderSlideContent = (slide: any, result: AnalysisResult, chartData: any[]
             );
         case 'advice':
             return (
-                <div className="flex-1 flex flex-col justify-center p-6 bg-zinc-900">
-                    <h2 className="text-4xl font-display font-bold mb-8 text-yellow-400">{slide.title}</h2>
+                <div className="flex-1 flex flex-col justify-start overflow-y-auto p-6 bg-zinc-900">
+                    <h2 className="text-4xl font-display font-bold mb-6 text-yellow-400 sticky top-0 bg-zinc-900 z-10 py-2">{slide.title}</h2>
                     
                     {result.advice.status === 'Single' ? (
-                        <div className="space-y-6">
-                            <div className="bg-zinc-800 p-6 rounded-2xl border border-zinc-700">
+                        <div className="space-y-4 pb-8">
+                            <div className="bg-zinc-800 p-4 rounded-xl border border-zinc-700">
                                 <h3 className="text-pink-500 font-bold mb-2 flex items-center gap-2">
                                     <Heart className="w-5 h-5" /> The Strategy
                                 </h3>
-                                <p className="text-lg">{result.advice.datingStrategy}</p>
+                                <p className="text-base text-zinc-300">{result.advice.datingStrategy}</p>
                             </div>
-                            <div className="bg-zinc-800 p-6 rounded-2xl border border-zinc-700">
+                            
+                            <div className="bg-zinc-800 p-4 rounded-xl border border-zinc-700">
                                 <h3 className="text-blue-500 font-bold mb-2 flex items-center gap-2">
-                                    <MapPin className="w-5 h-5" /> Where to look
+                                    <MapPin className="w-5 h-5" /> Hunting Grounds
                                 </h3>
-                                <p className="text-lg">{result.advice.meetingPlace}</p>
+                                <p className="text-base text-zinc-300">{result.advice.meetingPlace}</p>
                             </div>
+
+                             {result.advice.myType && (
+                                <div className="bg-zinc-800 p-4 rounded-xl border border-zinc-700">
+                                    <h3 className="text-purple-500 font-bold mb-2 flex items-center gap-2">
+                                        <UserPlus className="w-5 h-5" /> Your Ideal Match
+                                    </h3>
+                                    <p className="text-base text-zinc-300">{result.advice.myType}</p>
+                                </div>
+                            )}
+
+                            {result.advice.improvementTips && (
+                                <div className="bg-zinc-800 p-4 rounded-xl border border-zinc-700">
+                                    <h3 className="text-green-500 font-bold mb-2 flex items-center gap-2">
+                                        <ArrowUpCircle className="w-5 h-5" /> Self-Work
+                                    </h3>
+                                    <ul className="list-disc list-inside text-sm text-zinc-300 space-y-1">
+                                        {result.advice.improvementTips.map((tip, i) => <li key={i}>{tip}</li>)}
+                                    </ul>
+                                </div>
+                            )}
+                            
+                            {result.advice.beginnerTips && (
+                                <div className="bg-zinc-800 p-4 rounded-xl border border-zinc-700">
+                                    <h3 className="text-yellow-500 font-bold mb-2 flex items-center gap-2">
+                                        <Sparkles className="w-5 h-5" /> Beginner Tips
+                                    </h3>
+                                    <ul className="list-disc list-inside text-sm text-zinc-300 space-y-1">
+                                        {result.advice.beginnerTips.map((tip, i) => <li key={i}>{tip}</li>)}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     ) : (
                          <div className="space-y-4">

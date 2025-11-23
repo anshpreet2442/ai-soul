@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserContext } from '../types';
-import { ArrowRight, Heart, User, Sparkles, HelpCircle } from 'lucide-react';
+import { ArrowRight, Heart, User, Sparkles, HelpCircle, Eye } from 'lucide-react';
 
 interface PreQuizFormProps {
     onComplete: (context: UserContext) => void;
@@ -10,14 +10,16 @@ interface PreQuizFormProps {
 export const PreQuizForm: React.FC<PreQuizFormProps> = ({ onComplete }) => {
     const [step, setStep] = useState(0);
     const [formData, setFormData] = useState<Partial<UserContext>>({
-        relationshipHistoryCount: 0
+        relationshipHistoryCount: 0,
+        insecurity: "",
+        selfLoveTrait: ""
     });
 
     const handleNext = (data: Partial<UserContext>) => {
         const updated = { ...formData, ...data };
         setFormData(updated);
         
-        if (step < 3) {
+        if (step < 4) { // Increased steps
             setStep(prev => prev + 1);
         } else {
             onComplete(updated as UserContext);
@@ -84,6 +86,42 @@ export const PreQuizForm: React.FC<PreQuizFormProps> = ({ onComplete }) => {
                             <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity text-pink-500" />
                         </button>
                     ))}
+                </div>
+            )
+        },
+        {
+            id: 'mirror',
+            question: "Mirror, Mirror...",
+            icon: <Eye className="w-8 h-8 text-cyan-400" />,
+            render: () => (
+                <div className="flex flex-col gap-4 w-full">
+                     <div className="flex flex-col gap-2">
+                        <label className="text-sm text-zinc-400 ml-1">My biggest insecurity is...</label>
+                        <input 
+                            type="text" 
+                            placeholder="e.g., Not being enough, Being abandoned..." 
+                            className="bg-zinc-800/50 border border-zinc-700 p-4 rounded-xl text-white outline-none focus:border-cyan-500 transition-colors"
+                            onChange={(e) => setFormData({...formData, insecurity: e.target.value})}
+                            defaultValue={formData.insecurity}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm text-zinc-400 ml-1">I love this about myself...</label>
+                        <input 
+                            type="text" 
+                            placeholder="e.g., My empathy, My humor..." 
+                            className="bg-zinc-800/50 border border-zinc-700 p-4 rounded-xl text-white outline-none focus:border-cyan-500 transition-colors"
+                            onChange={(e) => setFormData({...formData, selfLoveTrait: e.target.value})}
+                            defaultValue={formData.selfLoveTrait}
+                        />
+                    </div>
+                    <button 
+                        onClick={() => formData.insecurity && formData.selfLoveTrait && handleNext({})}
+                        disabled={!formData.insecurity || !formData.selfLoveTrait}
+                        className="mt-4 bg-white text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Reflect & Continue <ArrowRight size={18} />
+                    </button>
                 </div>
             )
         },

@@ -52,10 +52,13 @@ export interface CelebrityMatch {
 }
 
 export interface RelationshipAdvice {
-    status: 'Single' | 'Relationship' | 'Complicated';
+    status: 'Single' | 'Relationship' | 'Complicated' | 'Married';
     // For Singles
     datingStrategy?: string;
     meetingPlace?: string;
+    myType?: string; // New: What kind of partner suits them
+    improvementTips?: string[]; // New: Things to work on
+    beginnerTips?: string[]; // New: Dating 101 for their age
     // For Relationships
     redFlags?: string[];
     greenFlags?: string[];
@@ -83,6 +86,8 @@ export interface UserContext {
     relationshipStatus: 'Single' | 'Relationship' | 'Complicated' | 'Married';
     relationshipHistoryCount: number;
     intent: string; // "Find myself", "Fix my relationship", "Just curious"
+    insecurity?: string; // New
+    selfLoveTrait?: string; // New
 }
 
 export enum AppState {

@@ -129,27 +129,37 @@ export const analyzeAttachmentStyle = async (answers: Answer[], context: UserCon
         Status: ${context.relationshipStatus}
         History: ${context.relationshipHistoryCount} past relationships
         Intent: ${context.intent}
+        Insecurity: ${context.insecurity || "Not specified"}
+        Self-Love Trait: ${context.selfLoveTrait || "Not specified"}
     `;
 
     const prompt = `
-        Analyze these attachment style test answers.
+        Analyze these attachment style test answers and user profile.
         ${contextStr}
         User Answers: ${answersJson}
 
         Tasks:
         1. Calculate scores (0-100) for 8 dimensions.
         2. Determine Attachment Style & 2-letter Code.
-        3. Create 5 Spotify Wrapped style slides text.
+        3. Create 5 Spotify Wrapped style slides. IMPORTANT: Each slide MUST have a 'content' field with a paragraph of text, not just a title.
         4. Select TAROT CARD (Name, Meaning, and a visual description for a comic style image).
         5. Recommend SONG (Title, Artist, Reason, and a visual description for album art).
         6. Determine CELEBRITY MATCH (Opposite gender/preference usually): Name, Why they match, and visual description.
         7. PROVIDE ADVICE based on Status:
-           - IF SINGLE: Provide 'datingStrategy' and 'meetingPlace' (be specific, e.g., "Art gallery opening", "Coffee shop").
-           - IF RELATIONSHIP/MARRIED: Provide list of 'redFlags' user ignores, 'greenFlags' they have, and 'dominantFlagScore' (0-100).
+           - IF SINGLE: 
+             * 'datingStrategy' (Strategy for their attachment style)
+             * 'meetingPlace' (Specific places: "Book club", "Jazz bar")
+             * 'myType' (Describe the personality type that is good for them)
+             * 'improvementTips' (List of 3 things to work on regarding their insecurity: ${context.insecurity})
+             * 'beginnerTips' (3 basic dating tips for age ${context.age})
+           - IF RELATIONSHIP/MARRIED/COMPLICATED: 
+             * 'redFlags' (List of 3 flags they often ignore)
+             * 'greenFlags' (List of 3 flags they display)
+             * 'dominantFlagScore' (0-100)
         8. Main Image Prompt: A high-contrast comic book style illustration of their soul.
 
-        Return strictly JSON matching the AnalysisResult interface structure found in types.ts.
-        Keys: twoLetterCode, attachmentStyleName, scores, summary, slides, tarot (cardName, meaning, imagePrompt), song (title, artist, reason, coverArtPrompt), celebrityMatch (name, reason, imagePrompt), advice, mainImagePrompt.
+        Return strictly JSON matching the AnalysisResult interface.
+        Keys: twoLetterCode, attachmentStyleName, scores, summary, slides (title, content, bgColor, textColor), tarot (cardName, meaning, imagePrompt), song (title, artist, reason, coverArtPrompt), celebrityMatch (name, reason, imagePrompt), advice, mainImagePrompt.
     `;
 
     const response = await ai.models.generateContent({
